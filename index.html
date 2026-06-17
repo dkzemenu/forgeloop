@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ForgeLoop Consultancy PLC</title>
+  <style>
+    /* ── RapidKit design tokens ──────────────────────────── */
+    :root {
+      --rk-background:           hsl(0 0% 100%);
+      --rk-foreground:           hsl(0 0% 3.9%);
+      --rk-card:                 hsl(0 0% 100%);
+      --rk-card-foreground:      hsl(0 0% 3.9%);
+      --rk-primary:              hsl(0 0% 9%);
+      --rk-primary-foreground:   hsl(0 0% 98%);
+      --rk-secondary:            hsl(0 0% 96.1%);
+      --rk-secondary-foreground: hsl(0 0% 9%);
+      --rk-muted:                hsl(0 0% 96.1%);
+      --rk-muted-foreground:     hsl(0 0% 45.1%);
+      --rk-border:               hsl(0 0% 89.8%);
+      --rk-ring:                 hsl(0 0% 3.9%);
+      --rk-radius:               0.4rem;
+      --rk-font-sans:            'Avenir Next', 'Nunito Sans', 'Segoe UI Variable', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --rk-font-mono:            'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
+      --rk-button-height:        2.625rem;
+      --rk-button-padding-x:     1rem;
+      --rk-button-font-size:     0.875rem;
+      --rk-button-font-weight:   600;
+      --rk-button-letter-spacing:0.01em;
+      --rk-button-shadow:        0 1px 2px hsl(0 0% 3.9% / 0.08);
+      --rk-button-shadow-hover:  0 8px 16px hsl(0 0% 3.9% / 0.14);
+      --rk-control-shadow:       0 1px 2px hsl(0 0% 3.9% / 0.06);
+
+      /* brand accent on top of RapidKit neutral base */
+      --brand:       #d4500a;
+      --brand-hover: #bf4508;
+      --brand-light: #f97316;
+      --brand-dim:   rgba(212, 80, 10, 0.12);
+    }
+
+    .dark {
+      --rk-background:           hsl(0 0% 3.9%);
+      --rk-foreground:           hsl(0 0% 98%);
+      --rk-card:                 hsl(0 0% 3.9%);
+      --rk-card-foreground:      hsl(0 0% 98%);
+      --rk-primary:              hsl(0 0% 98%);
+      --rk-primary-foreground:   hsl(0 0% 9%);
+      --rk-secondary:            hsl(0 0% 14.9%);
+      --rk-secondary-foreground: hsl(0 0% 98%);
+      --rk-muted:                hsl(0 0% 14.9%);
+      --rk-muted-foreground:     hsl(0 0% 63.9%);
+      --rk-border:               hsl(0 0% 14.9%);
+      --rk-ring:                 hsl(0 0% 83.1%);
+      --rk-button-shadow:        0 1px 2px hsl(0 0% 0% / 0.45);
+      --rk-button-shadow-hover:  0 10px 18px hsl(0 0% 0% / 0.5);
+      --rk-control-shadow:       0 1px 2px hsl(0 0% 0% / 0.32);
+    }
+
+    /* ── Reset ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--rk-font-sans);
+      background: var(--rk-background);
+      color: var(--rk-foreground);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── RapidKit button primitive ───────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: var(--rk-button-height);
+      padding: 0 var(--rk-button-padding-x);
+      border-radius: var(--rk-radius);
+      font-family: var(--rk-font-sans);
+      font-size: var(--rk-button-font-size);
+      font-weight: var(--rk-button-font-weight);
+      letter-spacing: var(--rk-button-letter-spacing);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      box-shadow: var(--rk-button-shadow);
+      transition: box-shadow 0.18s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:hover { box-shadow: var(--rk-button-shadow-hover); }
+
+    .btn-primary {
+      background: var(--rk-primary);
+      color: var(--rk-primary-foreground);
+    }
+
+    .btn-secondary {
+      background: var(--rk-secondary);
+      color: var(--rk-secondary-foreground);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--rk-muted-foreground);
+      box-shadow: none;
+    }
+
+    .btn-ghost:hover {
+      background: var(--rk-secondary);
+      color: var(--rk-foreground);
+      box-shadow: none;
+    }
+
+    .btn-brand {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn-brand:hover { background: var(--brand-hover); }
+
+    /* dark section overrides */
+    .dark .btn-primary {
+      background: var(--rk-primary);
+      color: var(--rk-primary-foreground);
+    }
+
+    .dark .btn-secondary {
+      background: var(--rk-secondary);
+      color: var(--rk-secondary-foreground);
+    }
+
+    .dark .btn-ghost {
+      color: var(--rk-muted-foreground);
+    }
+
+    .dark .btn-ghost:hover {
+      background: var(--rk-secondary);
+      color: var(--rk-foreground);
+    }
+
+    /* ── Nav ─────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 200;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      border-bottom: 1px solid var(--rk-border);
+      background: rgba(10, 10, 10, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 26px; height: 26px;
+      background: var(--brand);
+      border-radius: var(--rk-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark svg { display: block; }
+
+    .logo-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: hsl(0 0% 98%);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      height: 32px;
+      padding: 0 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: hsl(0 0% 55%);
+      text-decoration: none;
+      border-radius: var(--rk-radius);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-links a:hover {
+      background: hsl(0 0% 14.9%);
+      color: hsl(0 0% 98%);
+    }
+
+    /* ── Layout helpers ──────────────────────────────────── */
+    .container { max-width: 1060px; margin: 0 auto; }
+
+    section { padding: 6rem 2rem; }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--rk-muted-foreground);
+      margin-bottom: 1rem;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 14px; height: 1px;
+      background: var(--rk-muted-foreground);
+    }
+
+    .h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      color: var(--rk-foreground);
+    }
+
+    .lead {
+      font-size: 0.9375rem;
+      color: var(--rk-muted-foreground);
+      line-height: 1.75;
+      max-width: 480px;
+    }
+
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 110px 2rem 6rem;
+      position: relative;
+      overflow: hidden;
+      background: hsl(0 0% 3.9%);
+    }
+
+    /* dot grid — matches RapidKit docs site pattern */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(hsl(0 0% 100% / 0.055) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(ellipse 70% 55% at 50% 42%, black 20%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 42%, black 20%, transparent 100%);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 38%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 560px; height: 360px;
+      background: radial-gradient(ellipse, var(--brand-dim) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 740px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 28px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid hsl(0 0% 20%);
+      background: hsl(0 0% 8%);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: hsl(0 0% 55%);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .eyebrow-pip {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--brand-light);
+      animation: blink 2.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.2rem);
+      font-weight: 900;
+      color: hsl(0 0% 98%);
+      letter-spacing: -0.045em;
+      line-height: 1.0;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 .outline {
+      color: transparent;
+      -webkit-text-stroke: 1.5px hsl(0 0% 30%);
+    }
+
+    .hero-sub {
+      font-size: 0.9375rem;
+      color: hsl(0 0% 45%);
+      line-height: 1.75;
+      max-width: 400px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 4.5rem;
+    }
+
+    .hero-cta .btn {
+      height: 2.75rem;
+      padding: 0 1.25rem;
+      font-size: 0.875rem;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: hsl(0 0% 32%);
+      font-weight: 500;
+    }
+
+    .meta-flag { font-size: 1rem; }
+
+    .meta-sep {
+      width: 20px; height: 1px;
+      background: hsl(0 0% 18%);
+    }
+
+    /* ── Ticker ──────────────────────────────────────────── */
+    .ticker {
+      border-top: 1px solid hsl(0 0% 12%);
+      border-bottom: 1px solid hsl(0 0% 12%);
+      background: hsl(0 0% 6%);
+      height: 38px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticker-track {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      animation: ticker 36s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: hsl(0 0% 28%);
+      padding: 0 2.5rem;
+    }
+
+    .ticker-dot {
+      display: inline-block;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--brand);
+      flex-shrink: 0;
+    }
+
+    /* ── Services ────────────────────────────────────────── */
+    #services { background: var(--rk-background); }
+
+    .services-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .sticky-col { position: sticky; top: 76px; }
+
+    .sticky-col .btn { margin-top: 1.75rem; }
+
+    .service-list { display: flex; flex-direction: column; }
+
+    .service-row {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 1.25rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--rk-border);
+      transition: opacity 0.15s;
+    }
+
+    .service-row:first-child { border-top: 1px solid var(--rk-border); }
+    .service-row:hover { opacity: 0.75; }
+
+    .svc-num {
+      font-family: var(--rk-font-mono);
+      font-size: 0.72rem;
+      color: var(--rk-muted-foreground);
+      padding-top: 2px;
+    }
+
+    .svc-title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.35rem;
+      color: var(--rk-foreground);
+    }
+
+    .svc-desc {
+      font-size: 0.8375rem;
+      color: var(--rk-muted-foreground);
+      line-height: 1.7;
+    }
+
+    /* ── About ───────────────────────────────────────────── */
+    #about { background: var(--rk-secondary); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    /* RapidKit-style card — using rk-card tokens */
+    .loc-card-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--rk-border);
+      border: 1px solid var(--rk-border);
+      border-radius: calc(var(--rk-radius) * 3);
+      overflow: hidden;
+      box-shadow: var(--rk-control-shadow);
+    }
+
+    .loc-panel {
+      background: var(--rk-card);
+      padding: 1.75rem;
+    }
+
+    .loc-flag { font-size: 2rem; display: block; margin-bottom: 0.85rem; }
+
+    .loc-region {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--rk-muted-foreground);
+      margin-bottom: 0.35rem;
+    }
+
+    .loc-city {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--rk-card-foreground);
+      margin-bottom: 0.5rem;
+    }
+
+    .loc-note {
+      font-size: 0.8rem;
+      color: var(--rk-muted-foreground);
+      line-height: 1.65;
+    }
+
+    .loc-panel:last-child { background: var(--rk-secondary); }
+
+    .about-copy .lead { margin-bottom: 0.85rem; }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-top: 1.5rem;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--rk-foreground);
+    }
+
+    .check-icon {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .check-icon svg { display: block; }
+
+    /* ── Process ─────────────────────────────────────────── */
+    #process {
+      background: hsl(0 0% 3.9%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #process::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(hsl(0 0% 100% / 0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+
+    #process .container { position: relative; z-index: 1; }
+    #process .section-label { color: hsl(0 0% 35%); }
+    #process .section-label::before { background: hsl(0 0% 35%); }
+    #process .h2 { color: hsl(0 0% 98%); }
+
+    /* RapidKit-style grid of cards */
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: hsl(0 0% 14.9%);
+      border: 1px solid hsl(0 0% 14.9%);
+      border-radius: calc(var(--rk-radius) * 3);
+      overflow: hidden;
+      margin-top: 3rem;
+    }
+
+    .step-card {
+      background: hsl(0 0% 3.9%);
+      padding: 2rem 1.75rem;
+      transition: background 0.15s;
+    }
+
+    .step-card:hover { background: hsl(0 0% 6%); }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 9px;
+      border-radius: var(--rk-radius);
+      background: var(--brand-dim);
+      color: var(--brand-light);
+      font-family: var(--rk-font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.75rem;
+    }
+
+    .step-title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: hsl(0 0% 98%);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-body {
+      font-size: 0.8125rem;
+      color: hsl(0 0% 42%);
+      line-height: 1.75;
+    }
+
+    /* ── Stack ───────────────────────────────────────────── */
+    #tech { background: var(--rk-background); }
+
+    .tech-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+      align-items: end;
+    }
+
+    .stack-groups { display: flex; flex-direction: column; gap: 1.75rem; }
+
+    .stack-label {
+      font-family: var(--rk-font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--rk-muted-foreground);
+      margin-bottom: 0.75rem;
+    }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* RapidKit secondary-button style tags */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 12px;
+      border-radius: var(--rk-radius);
+      border: 1px solid var(--rk-border);
+      background: var(--rk-secondary);
+      color: var(--rk-secondary-foreground);
+      font-size: 0.78rem;
+      font-weight: 500;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      cursor: default;
+    }
+
+    .tag:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+      background: var(--brand-dim);
+    }
+
+    /* ── CTA ─────────────────────────────────────────────── */
+    #contact {
+      background: hsl(0 0% 3.9%);
+      text-align: center;
+      padding: 7rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #contact::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(hsl(0 0% 100% / 0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(ellipse 55% 55% at 50% 50%, black, transparent);
+      -webkit-mask-image: radial-gradient(ellipse 55% 55% at 50% 50%, black, transparent);
+    }
+
+    #contact::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse, var(--brand-dim) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    #contact .container { position: relative; z-index: 1; }
+
+    .cta-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--brand-light);
+      margin-bottom: 1.25rem;
+    }
+
+    #contact h2 {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900;
+      color: hsl(0 0% 98%);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 1rem;
+    }
+
+    #contact p {
+      font-size: 0.9rem;
+      color: hsl(0 0% 40%);
+      max-width: 380px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-btns .btn {
+      height: 2.75rem;
+      padding: 0 1.375rem;
+    }
+
+    .cta-note {
+      display: block;
+      margin-top: 1.75rem;
+      font-size: 0.75rem;
+      color: hsl(0 0% 28%);
+    }
+
+    .cta-note a {
+      color: hsl(0 0% 40%);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .cta-note a:hover { color: hsl(0 0% 70%); }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      background: hsl(0 0% 5%);
+      border-top: 1px solid hsl(0 0% 12%);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: hsl(0 0% 35%);
+      letter-spacing: -0.01em;
+    }
+
+    .footer-nav {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .footer-nav a {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 0.6rem;
+      font-size: 0.75rem;
+      color: hsl(0 0% 32%);
+      text-decoration: none;
+      border-radius: var(--rk-radius);
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .footer-nav a:hover {
+      background: hsl(0 0% 12%);
+      color: hsl(0 0% 60%);
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      color: hsl(0 0% 22%);
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .services-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+      .sticky-col { position: static; }
+      .about-grid { grid-template-columns: 1fr; }
+      .step-grid { grid-template-columns: 1fr 1fr; }
+      .tech-header { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      nav .nav-links { display: none; }
+      .step-grid { grid-template-columns: 1fr; }
+      .loc-card-pair { grid-template-columns: 1fr; }
+      .loc-panel:last-child { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 3h6L5 7.5h4L3 11l2-3.5H2L4.5 3z" fill="white" stroke="white" stroke-width="0.3" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="logo-name">ForgeLoop</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#tech">Stack</a></li>
+    </ul>
+
+    <div style="display:flex; gap:6px; align-items:center;">
+      <a href="mailto:hello@forgeloop.com" class="btn btn-ghost" style="color:hsl(0 0% 45%); font-size:0.78rem;">hello@forgeloop.com</a>
+      <a href="#contact" class="btn btn-primary" style="height:34px; padding:0 14px; font-size:0.8rem;">Let's talk</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-pip"></span>
+        Washington DC &amp; Addis Ababa
+      </div>
+
+      <h1>We build<br /><span class="outline">software</span><br />that matters.</h1>
+
+      <p class="hero-sub">Outsourced engineering and local solutions for businesses in the US and Ethiopia — delivered with precision.</p>
+
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-primary">Start a project</a>
+        <a href="#services" class="btn btn-secondary" style="background:hsl(0 0% 10%); color:hsl(0 0% 65%); border: 1px solid hsl(0 0% 16%);">View services</a>
+      </div>
+
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span class="meta-flag">🇺🇸</span>
+          <span>United States</span>
+        </div>
+        <div class="meta-sep"></div>
+        <div class="meta-item">
+          <span class="meta-flag">🇪🇹</span>
+          <span>Ethiopia</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <span class="ticker-item">Outsourced Development</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Custom Engineering</span><span class="ticker-dot"></span>
+      <span class="ticker-item">AI &amp; Automation</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Cloud &amp; DevOps</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Ethiopian Market Solutions</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Technical Consulting</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Mobile &amp; Web</span><span class="ticker-dot"></span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item">Outsourced Development</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Custom Engineering</span><span class="ticker-dot"></span>
+      <span class="ticker-item">AI &amp; Automation</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Cloud &amp; DevOps</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Ethiopian Market Solutions</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Technical Consulting</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Mobile &amp; Web</span><span class="ticker-dot"></span>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="container">
+      <div class="services-layout">
+        <div class="sticky-col">
+          <div class="section-label">What we do</div>
+          <h2 class="h2">Built for<br />real results.</h2>
+          <p class="lead">From embedded engineering teams to market-specific local products — we handle the full cycle.</p>
+          <a href="#contact" class="btn btn-brand">Work with us</a>
+        </div>
+
+        <div class="service-list">
+          <div class="service-row">
+            <span class="svc-num">01</span>
+            <div>
+              <div class="svc-title">Outsourced Software Development</div>
+              <div class="svc-desc">We embed directly into your team — managing your backlog, shipping on schedule, and keeping everything visible. No handoffs, no black boxes.</div>
+            </div>
+          </div>
+          <div class="service-row">
+            <span class="svc-num">02</span>
+            <div>
+              <div class="svc-title">Custom Software Engineering</div>
+              <div class="svc-desc">Web apps, mobile apps, APIs, and backend systems built from first principles for your business logic and designed to scale.</div>
+            </div>
+          </div>
+          <div class="service-row">
+            <span class="svc-num">03</span>
+            <div>
+              <div class="svc-title">Local Solutions — Ethiopia</div>
+              <div class="svc-desc">Fintech, e-commerce, logistics, and civic platforms with deep knowledge of Ethiopian market dynamics, payment rails, and regulatory context.</div>
+            </div>
+          </div>
+          <div class="service-row">
+            <span class="svc-num">04</span>
+            <div>
+              <div class="svc-title">AI &amp; Intelligent Automation</div>
+              <div class="svc-desc">LLM integrations, workflow automation, and data pipelines that reduce friction and give your team serious leverage.</div>
+            </div>
+          </div>
+          <div class="service-row">
+            <span class="svc-num">05</span>
+            <div>
+              <div class="svc-title">Cloud &amp; DevOps</div>
+              <div class="svc-desc">Infrastructure, CI/CD, containerisation, and cloud migrations on AWS, GCP, and Azure — so your product stays reliable and your team moves fast.</div>
+            </div>
+          </div>
+          <div class="service-row">
+            <span class="svc-num">06</span>
+            <div>
+              <div class="svc-title">Technical Consulting</div>
+              <div class="svc-desc">Architecture reviews, due diligence, and technology roadmaps for founders and engineering leaders who need a trusted second opinion.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="loc-card-pair">
+          <div class="loc-panel">
+            <span class="loc-flag">🇺🇸</span>
+            <div class="loc-region">North America</div>
+            <div class="loc-city">Washington DC</div>
+            <div class="loc-note">Serving US clients with enterprise-grade development, product strategy, and technical consulting.</div>
+          </div>
+          <div class="loc-panel">
+            <span class="loc-flag">🇪🇹</span>
+            <div class="loc-region">East Africa</div>
+            <div class="loc-city">Addis Ababa</div>
+            <div class="loc-note">Building platforms for Ethiopian businesses, startups, and institutions with local market expertise.</div>
+          </div>
+        </div>
+
+        <div class="about-copy">
+          <div class="section-label">Who we are</div>
+          <h2 class="h2">Two markets.<br />One team.</h2>
+          <p class="lead">ForgeLoop bridges world-class engineering and the markets that need it most — combining US rigour with deep knowledge of Ethiopia's fast-growing tech landscape.</p>
+          <p class="lead">We don't measure success in hours billed. We measure it in outcomes shipped.</p>
+          <ul class="checklist">
+            <li>
+              <span class="check-icon">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              Senior engineers only — no juniors on your product
+            </li>
+            <li>
+              <span class="check-icon">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              Agile sprints with real, weekly visibility
+            </li>
+            <li>
+              <span class="check-icon">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              Outcome-based pricing, not hourly billing
+            </li>
+            <li>
+              <span class="check-icon">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              Long-term partnerships over one-off engagements
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="container">
+      <div class="section-label">How we work</div>
+      <h2 class="h2" style="max-width:460px;">A process that keeps<br />you in control.</h2>
+
+      <div class="step-grid">
+        <div class="step-card">
+          <span class="step-badge">01 — Discovery</span>
+          <div class="step-title">Understand before we build.</div>
+          <div class="step-body">We learn your business, users, and constraints before proposing anything. Scope, budget, and success metrics agreed together upfront.</div>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">02 — Architecture</span>
+          <div class="step-title">Design for where you're going.</div>
+          <div class="step-body">Tech stack, infrastructure, and system design locked in before production code is written. No expensive surprises halfway through.</div>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">03 — Build</span>
+          <div class="step-title">Ship in two-week cycles.</div>
+          <div class="step-body">Two-week sprints, async daily updates, continuous delivery. You see real progress every week — not just at the end.</div>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">04 — Launch</span>
+          <div class="step-title">Go live with confidence.</div>
+          <div class="step-body">We handle deployment, monitoring, and post-launch iteration. Your product doesn't stop at v1 — neither do we.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section id="tech">
+    <div class="container">
+      <div class="tech-header">
+        <div>
+          <div class="section-label">Technologies</div>
+          <h2 class="h2">Modern stack,<br />proven tools.</h2>
+        </div>
+        <p class="lead" style="font-size:0.875rem;">Battle-tested technologies across every layer. We pick the right tool for the job — not the trendy one.</p>
+      </div>
+
+      <div class="stack-groups">
+        <div>
+          <div class="stack-label">Frontend</div>
+          <div class="tag-row">
+            <span class="tag">React</span>
+            <span class="tag">Next.js</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Vue</span>
+            <span class="tag">Tailwind CSS</span>
+          </div>
+        </div>
+        <div>
+          <div class="stack-label">Backend</div>
+          <div class="tag-row">
+            <span class="tag">Node.js</span>
+            <span class="tag">Python</span>
+            <span class="tag">Django</span>
+            <span class="tag">FastAPI</span>
+            <span class="tag">Go</span>
+            <span class="tag">GraphQL</span>
+            <span class="tag">REST</span>
+          </div>
+        </div>
+        <div>
+          <div class="stack-label">Mobile</div>
+          <div class="tag-row">
+            <span class="tag">React Native</span>
+            <span class="tag">Flutter</span>
+            <span class="tag">Expo</span>
+          </div>
+        </div>
+        <div>
+          <div class="stack-label">Infrastructure &amp; Data</div>
+          <div class="tag-row">
+            <span class="tag">AWS</span>
+            <span class="tag">GCP</span>
+            <span class="tag">Docker</span>
+            <span class="tag">Kubernetes</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">MongoDB</span>
+            <span class="tag">Redis</span>
+            <span class="tag">Terraform</span>
+          </div>
+        </div>
+        <div>
+          <div class="stack-label">AI &amp; ML</div>
+          <div class="tag-row">
+            <span class="tag">Claude / Anthropic</span>
+            <span class="tag">OpenAI</span>
+            <span class="tag">LangChain</span>
+            <span class="tag">Hugging Face</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contact">
+    <div class="container">
+      <div class="cta-eyebrow">Get in touch</div>
+      <h2>Ready to build<br />something real?</h2>
+      <p>Tell us what you're working on. We'll reply within 24 hours with a clear, honest assessment.</p>
+      <div class="cta-btns">
+        <a href="mailto:hello@forgeloop.com" class="btn btn-primary">Send us a message</a>
+        <a href="#" class="btn" style="background:hsl(0 0% 10%); color:hsl(0 0% 60%); border:1px solid hsl(0 0% 16%);">Schedule a call</a>
+      </div>
+      <span class="cta-note">or reach us at <a href="mailto:hello@forgeloop.com">hello@forgeloop.com</a></span>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">ForgeLoop Consultancy PLC</span>
+    <ul class="footer-nav">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="mailto:hello@forgeloop.com">Contact</a></li>
+    </ul>
+    <span class="footer-copy">© 2026 · US &amp; Ethiopia</span>
+  </footer>
+
+</body>
+</html>
