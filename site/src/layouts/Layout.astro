@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = 'ForgeLoop Consultancy PLC',
+	description = 'Outsourced engineering and local solutions for businesses in the US and Ethiopia — delivered with precision.',
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content={description} />
+		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<!-- NAV -->
+		<nav>
+			<a href="/" class="logo">
+				<div class="logo-mark">
+					<svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+						<path
+							d="M2 3h6L5 7.5h4L3 11l2-3.5H2L4.5 3z"
+							fill="#0a0a0a"
+							stroke="#0a0a0a"
+							stroke-width="0.3"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</div>
+				<span class="logo-name">ForgeLoop</span>
+			</a>
+
+			<ul class="nav-links">
+				<li><a href="/#services">Services</a></li>
+				<li><a href="/#about">About</a></li>
+				<li><a href="/#process">Process</a></li>
+				<li><a href="/#tech">Stack</a></li>
+				<li><a href="/blog">Blog</a></li>
+			</ul>
+
+			<div style="display:flex; gap:6px; align-items:center;">
+				<a
+					href="mailto:hello@forgeloop.com"
+					class="btn btn-ghost"
+					style="color:hsl(0 0% 45%); font-size:0.78rem;">hello@forgeloop.com</a
+				>
+				<a
+					href="/#contact"
+					class="btn btn-primary"
+					style="height:34px; padding:0 14px; font-size:0.8rem; background:hsl(0 0% 94%); color:hsl(0 0% 6%); border-color:hsl(0 0% 94%);"
+					>Let's talk</a
+				>
+			</div>
+		</nav>
+
+		<slot />
+
+		<!-- FOOTER -->
+		<footer>
+			<span class="footer-brand">ForgeLoop Consultancy PLC</span>
+			<ul class="footer-nav">
+				<li><a href="/#services">Services</a></li>
+				<li><a href="/#about">About</a></li>
+				<li><a href="/blog">Blog</a></li>
+				<li><a href="mailto:hello@forgeloop.com">Contact</a></li>
+			</ul>
+			<span class="footer-copy">© 2026 · US &amp; Ethiopia</span>
+		</footer>
+	</body>
+</html>

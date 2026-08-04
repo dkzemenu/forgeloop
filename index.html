@@ -4,56 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ForgeLoop Consultancy PLC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     /* ── RapidKit design tokens ──────────────────────────── */
     :root {
       --rk-background:           hsl(0 0% 100%);
-      --rk-foreground:           hsl(0 0% 3.9%);
+      --rk-foreground:           hsl(200 8% 12%);
       --rk-card:                 hsl(0 0% 100%);
-      --rk-card-foreground:      hsl(0 0% 3.9%);
-      --rk-primary:              hsl(0 0% 9%);
-      --rk-primary-foreground:   hsl(0 0% 98%);
-      --rk-secondary:            hsl(0 0% 96.1%);
-      --rk-secondary-foreground: hsl(0 0% 9%);
-      --rk-muted:                hsl(0 0% 96.1%);
-      --rk-muted-foreground:     hsl(0 0% 45.1%);
-      --rk-border:               hsl(0 0% 89.8%);
-      --rk-ring:                 hsl(0 0% 3.9%);
-      --rk-radius:               0.4rem;
-      --rk-font-sans:            'Avenir Next', 'Nunito Sans', 'Segoe UI Variable', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --rk-card-foreground:      hsl(200 8% 12%);
+      --rk-primary:              hsl(200 8% 12%);
+      --rk-primary-foreground:   hsl(0 0% 96%);
+      --rk-secondary:            hsl(60 3% 93%);
+      --rk-secondary-foreground: hsl(200 8% 12%);
+      --rk-muted:                hsl(60 3% 93%);
+      --rk-muted-foreground:     hsl(0 0% 42%);
+      --rk-border:               hsl(0 0% 84%);
+      --rk-ring:                 hsl(200 8% 12%);
+      --rk-radius:               0px;
+      --rk-font-sans:            'Inter', 'Alliance No.1', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
       --rk-font-mono:            'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
       --rk-button-height:        2.625rem;
-      --rk-button-padding-x:     1rem;
+      --rk-button-padding-x:     1.25rem;
       --rk-button-font-size:     0.875rem;
-      --rk-button-font-weight:   600;
+      --rk-button-font-weight:   500;
       --rk-button-letter-spacing:0.01em;
-      --rk-button-shadow:        0 1px 2px hsl(0 0% 3.9% / 0.08);
-      --rk-button-shadow-hover:  0 8px 16px hsl(0 0% 3.9% / 0.14);
-      --rk-control-shadow:       0 1px 2px hsl(0 0% 3.9% / 0.06);
-
-      /* brand accent on top of RapidKit neutral base */
-      --brand:       #d4500a;
-      --brand-hover: #bf4508;
-      --brand-light: #f97316;
-      --brand-dim:   rgba(212, 80, 10, 0.12);
-    }
-
-    .dark {
-      --rk-background:           hsl(0 0% 3.9%);
-      --rk-foreground:           hsl(0 0% 98%);
-      --rk-card:                 hsl(0 0% 3.9%);
-      --rk-card-foreground:      hsl(0 0% 98%);
-      --rk-primary:              hsl(0 0% 98%);
-      --rk-primary-foreground:   hsl(0 0% 9%);
-      --rk-secondary:            hsl(0 0% 14.9%);
-      --rk-secondary-foreground: hsl(0 0% 98%);
-      --rk-muted:                hsl(0 0% 14.9%);
-      --rk-muted-foreground:     hsl(0 0% 63.9%);
-      --rk-border:               hsl(0 0% 14.9%);
-      --rk-ring:                 hsl(0 0% 83.1%);
-      --rk-button-shadow:        0 1px 2px hsl(0 0% 0% / 0.45);
-      --rk-button-shadow-hover:  0 10px 18px hsl(0 0% 0% / 0.5);
-      --rk-control-shadow:       0 1px 2px hsl(0 0% 0% / 0.32);
+      --rk-button-shadow:        none;
+      --rk-button-shadow-hover:  none;
+      --rk-control-shadow:       none;
     }
 
     /* ── Reset ───────────────────────────────────────────── */
@@ -84,61 +63,50 @@
       letter-spacing: var(--rk-button-letter-spacing);
       text-decoration: none;
       cursor: pointer;
-      border: none;
+      border: 1px solid transparent;
       white-space: nowrap;
-      box-shadow: var(--rk-button-shadow);
-      transition: box-shadow 0.18s ease, background 0.15s ease, opacity 0.15s ease;
+      box-shadow: none;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
-
-    .btn:hover { box-shadow: var(--rk-button-shadow-hover); }
 
     .btn-primary {
       background: var(--rk-primary);
       color: var(--rk-primary-foreground);
+      border-color: var(--rk-primary);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--rk-primary);
     }
 
     .btn-secondary {
-      background: var(--rk-secondary);
+      background: transparent;
       color: var(--rk-secondary-foreground);
+      border-color: var(--rk-border);
     }
+
+    .btn-secondary:hover { border-color: var(--rk-foreground); }
 
     .btn-ghost {
       background: transparent;
       color: var(--rk-muted-foreground);
-      box-shadow: none;
+      border-color: transparent;
     }
 
     .btn-ghost:hover {
-      background: var(--rk-secondary);
       color: var(--rk-foreground);
-      box-shadow: none;
     }
 
     .btn-brand {
-      background: var(--brand);
-      color: #fff;
-    }
-
-    .btn-brand:hover { background: var(--brand-hover); }
-
-    /* dark section overrides */
-    .dark .btn-primary {
-      background: var(--rk-primary);
-      color: var(--rk-primary-foreground);
-    }
-
-    .dark .btn-secondary {
-      background: var(--rk-secondary);
-      color: var(--rk-secondary-foreground);
-    }
-
-    .dark .btn-ghost {
-      color: var(--rk-muted-foreground);
-    }
-
-    .dark .btn-ghost:hover {
-      background: var(--rk-secondary);
+      background: transparent;
       color: var(--rk-foreground);
+      border-color: var(--rk-foreground);
+    }
+
+    .btn-brand:hover {
+      background: var(--rk-foreground);
+      color: var(--rk-background);
     }
 
     /* ── Nav ─────────────────────────────────────────────── */
@@ -166,8 +134,7 @@
 
     .logo-mark {
       width: 26px; height: 26px;
-      background: var(--brand);
-      border-radius: var(--rk-radius);
+      background: hsl(0 0% 96%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -177,9 +144,9 @@
 
     .logo-name {
       font-size: 0.9rem;
-      font-weight: 700;
+      font-weight: 600;
       color: hsl(0 0% 98%);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
     }
 
     .nav-links {
@@ -230,10 +197,10 @@
     }
 
     .h2 {
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
+      font-size: clamp(2.1rem, 4.4vw, 3.4rem);
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
       margin-bottom: 1rem;
       color: var(--rk-foreground);
     }
@@ -288,10 +255,10 @@
       background: conic-gradient(
         from 0deg at 50% 45%,
         transparent 0deg,
-        rgba(212, 80, 10, 0.18) 18deg,
+        rgba(255, 255, 255, 0.09) 18deg,
         transparent 36deg,
         transparent 180deg,
-        rgba(212, 80, 10, 0.06) 198deg,
+        rgba(255, 255, 255, 0.04) 198deg,
         transparent 216deg
       );
       animation: beam-rotate 10s linear infinite;
@@ -316,7 +283,7 @@
     .hero-orb-1 {
       width: 600px; height: 600px;
       top: 50%; left: 50%;
-      background: radial-gradient(circle, rgba(212,80,10,0.35) 0%, rgba(212,80,10,0.1) 45%, transparent 70%);
+      background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 45%, transparent 70%);
       animation: orb-breathe 7s ease-in-out infinite;
     }
 
@@ -324,15 +291,15 @@
     .hero-orb-2 {
       width: 380px; height: 380px;
       top: 5%; left: 5%;
-      background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 65%);
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 65%);
       animation: orb-float-a 13s ease-in-out infinite;
     }
 
-    /* bottom-right warm glow */
+    /* bottom-right glow */
     .hero-orb-3 {
       width: 340px; height: 340px;
       bottom: 5%; right: 5%;
-      background: radial-gradient(circle, rgba(212,80,10,0.22) 0%, transparent 65%);
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 65%);
       animation: orb-float-b 16s ease-in-out infinite;
     }
 
@@ -340,7 +307,7 @@
     .hero-orb-4 {
       width: 220px; height: 220px;
       top: 18%; right: 14%;
-      background: radial-gradient(circle, rgba(255,160,80,0.12) 0%, transparent 65%);
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 65%);
       animation: orb-float-c 11s ease-in-out infinite;
     }
 
@@ -404,7 +371,7 @@
     .eyebrow-pip {
       width: 5px; height: 5px;
       border-radius: 50%;
-      background: var(--brand-light);
+      background: hsl(0 0% 92%);
       animation: blink 2.4s ease-in-out infinite;
     }
 
@@ -414,11 +381,11 @@
     }
 
     .hero h1 {
-      font-size: clamp(2.8rem, 7vw, 5.2rem);
-      font-weight: 900;
-      color: hsl(0 0% 98%);
-      letter-spacing: -0.045em;
-      line-height: 1.0;
+      font-size: clamp(3rem, 7.5vw, 5.8rem);
+      font-weight: 500;
+      color: hsl(0 0% 94%);
+      letter-spacing: -0.04em;
+      line-height: 1.02;
       margin-bottom: 1.5rem;
     }
 
@@ -447,6 +414,17 @@
       height: 2.75rem;
       padding: 0 1.25rem;
       font-size: 0.875rem;
+    }
+
+    .hero-cta .btn-primary {
+      background: hsl(0 0% 94%);
+      color: hsl(0 0% 6%);
+      border-color: hsl(0 0% 94%);
+    }
+
+    .hero-cta .btn-primary:hover {
+      background: transparent;
+      color: hsl(0 0% 94%);
     }
 
     .hero-meta {
@@ -509,7 +487,7 @@
       display: inline-block;
       width: 3px; height: 3px;
       border-radius: 50%;
-      background: var(--brand);
+      background: hsl(0 0% 32%);
       flex-shrink: 0;
     }
 
@@ -579,14 +557,13 @@
       gap: 1px;
       background: var(--rk-border);
       border: 1px solid var(--rk-border);
-      border-radius: calc(var(--rk-radius) * 3);
       overflow: hidden;
-      box-shadow: var(--rk-control-shadow);
     }
 
     .loc-panel {
       background: var(--rk-card);
       padding: 1.75rem;
+      clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
     }
 
     .loc-flag { font-size: 2rem; display: block; margin-bottom: 0.85rem; }
@@ -638,7 +615,7 @@
     .check-icon {
       width: 16px; height: 16px;
       border-radius: 50%;
-      background: var(--brand);
+      background: var(--rk-foreground);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -677,7 +654,6 @@
       gap: 1px;
       background: hsl(0 0% 14.9%);
       border: 1px solid hsl(0 0% 14.9%);
-      border-radius: calc(var(--rk-radius) * 3);
       overflow: hidden;
       margin-top: 3rem;
     }
@@ -686,6 +662,7 @@
       background: hsl(0 0% 3.9%);
       padding: 2rem 1.75rem;
       transition: background 0.15s;
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
     }
 
     .step-card:hover { background: hsl(0 0% 6%); }
@@ -694,13 +671,14 @@
       display: inline-flex;
       align-items: center;
       height: 22px;
-      padding: 0 9px;
-      border-radius: var(--rk-radius);
-      background: var(--brand-dim);
-      color: var(--brand-light);
+      padding: 0 10px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid hsl(0 0% 26%);
+      color: hsl(0 0% 82%);
       font-family: var(--rk-font-mono);
       font-size: 0.65rem;
-      font-weight: 700;
+      font-weight: 500;
       letter-spacing: 0.06em;
       margin-bottom: 1.75rem;
     }
@@ -749,10 +727,10 @@
       display: inline-flex;
       align-items: center;
       height: 28px;
-      padding: 0 12px;
-      border-radius: var(--rk-radius);
+      padding: 0 14px;
+      border-radius: 999px;
       border: 1px solid var(--rk-border);
-      background: var(--rk-secondary);
+      background: transparent;
       color: var(--rk-secondary-foreground);
       font-size: 0.78rem;
       font-weight: 500;
@@ -761,9 +739,9 @@
     }
 
     .tag:hover {
-      border-color: var(--brand);
-      color: var(--brand);
-      background: var(--brand-dim);
+      border-color: var(--rk-foreground);
+      color: var(--rk-foreground);
+      background: var(--rk-muted);
     }
 
     /* ── CTA ─────────────────────────────────────────────── */
@@ -793,7 +771,7 @@
       top: 50%; left: 50%;
       transform: translate(-50%,-50%);
       width: 640px; height: 440px;
-      background: radial-gradient(ellipse, rgba(212,80,10,0.15) 0%, transparent 65%);
+      background: radial-gradient(ellipse, rgba(255,255,255,0.1) 0%, transparent 65%);
       animation: orb-breathe-cta 9s ease-in-out infinite;
       pointer-events: none;
     }
@@ -810,17 +788,28 @@
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--brand-light);
+      color: hsl(0 0% 55%);
       margin-bottom: 1.25rem;
     }
 
     #contact h2 {
-      font-size: clamp(2.4rem, 5vw, 3.8rem);
-      font-weight: 900;
-      color: hsl(0 0% 98%);
+      font-size: clamp(2.6rem, 5.2vw, 4.2rem);
+      font-weight: 500;
+      color: hsl(0 0% 94%);
       letter-spacing: -0.04em;
-      line-height: 1.05;
+      line-height: 1.03;
       margin-bottom: 1rem;
+    }
+
+    #contact .btn-primary {
+      background: hsl(0 0% 94%);
+      color: hsl(0 0% 6%);
+      border-color: hsl(0 0% 94%);
+    }
+
+    #contact .btn-primary:hover {
+      background: transparent;
+      color: hsl(0 0% 94%);
     }
 
     #contact p {
@@ -929,7 +918,7 @@
     <a href="#" class="logo">
       <div class="logo-mark">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M2 3h6L5 7.5h4L3 11l2-3.5H2L4.5 3z" fill="white" stroke="white" stroke-width="0.3" stroke-linejoin="round"/>
+          <path d="M2 3h6L5 7.5h4L3 11l2-3.5H2L4.5 3z" fill="#0a0a0a" stroke="#0a0a0a" stroke-width="0.3" stroke-linejoin="round"/>
         </svg>
       </div>
       <span class="logo-name">ForgeLoop</span>
@@ -944,7 +933,7 @@
 
     <div style="display:flex; gap:6px; align-items:center;">
       <a href="mailto:hello@forgeloop.com" class="btn btn-ghost" style="color:hsl(0 0% 45%); font-size:0.78rem;">hello@forgeloop.com</a>
-      <a href="#contact" class="btn btn-primary" style="height:34px; padding:0 14px; font-size:0.8rem;">Let's talk</a>
+      <a href="#contact" class="btn btn-primary" style="height:34px; padding:0 14px; font-size:0.8rem; background:hsl(0 0% 94%); color:hsl(0 0% 6%); border-color:hsl(0 0% 94%);">Let's talk</a>
     </div>
   </nav>
 
