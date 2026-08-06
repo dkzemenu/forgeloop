@@ -13,8 +13,8 @@
   --rk-border:               hsl(0 0% 84%);
   --rk-ring:                 hsl(200 8% 12%);
   --rk-radius:               0px;
-  --rk-font-sans:            'Inter', 'Alliance No.1', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  --rk-font-mono:            'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
+  --rk-font-sans:            'Geist', 'Inter', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --rk-font-mono:            'Geist Mono', 'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
   --rk-button-height:        2.625rem;
   --rk-button-padding-x:     1.25rem;
   --rk-button-font-size:     0.875rem;
